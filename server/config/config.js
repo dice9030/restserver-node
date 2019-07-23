@@ -10,8 +10,25 @@ process.env.PORT = process.env.PORT || 3000;
 //  ENTORNO
 // ===================================
 
-process.env.NODE_ENV = 'PROD'; //process.env.NODE_ENV || 'dev';
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
+
+// ===================================
+//  FECHA DE VENCIMIENTO
+// ===================================
+//60 SEGUNDOS
+//60 MINTUS
+//24 HORAS
+//30 DIAS
+
+
+process.env.CADUCIDAD_TOKEN =  60 * 60 * 24 * 30;
+
+
+// ===================================
+//  SEED DE AUTENTICACIÓN
+// ===================================
+process.env.SEED =  process.env.SEED ||'este-es-prueba'; 
 
 // ===================================
 //  BASE DE DATOS
