@@ -5,35 +5,38 @@ const bcrypt = require('bcrypt');
 
 const _ = require('underscore');
 
-app.get('/usuario', function (req, res) {
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
+app.get('/usuario', verificaToken, (req, res) => {
+
+
     let desde = req.query.desde || 0
     desde = Number(desde)
     let limit = req.query.limit || 5;
     limit = Number(limit)
-    Usuario.find({estado:true},'nombre email role estado google img')
-           .skip(desde)
-           .limit(limit)
-           .exec( (err,usuarios) => {
-               if (err) {
-                   return res.status(400).json({
-                       ok: false,
-                       err
-                   })
-               }
-               Usuario.count({estado:true},(err,conteo) =>{
-                    res.json({
-                        ok:true,
-                        usuarios,
-                        cantidad:conteo
-                    })
-               })
-               
-           })
+    Usuario.find({ estado: true }, 'nombre email role estado google img')
+        .skip(desde)
+        .limit(limit)
+        .exec((err, usuarios) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+            }
+            Usuario.count({ estado: true }, (err, conteo) => {
+                res.json({
+                    ok: true,
+                    usuarios,
+                    cantidad: conteo
+                })
+            })
+
+        })
 
     //res.json('get usuario')
 })
 
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [verificaToken,verificaAdmin_Role], function (req, res) {
 
     let body = req.body;
 
@@ -60,9 +63,9 @@ app.post('/usuario', function (req, res) {
     });
 })
 
-app.put('/usuario/:id', function (req, res) {
+app.put('/usuario/:id', verificaToken, function (req, res) {
     let id = req.params.id;
-    let body = _.pick( req.body,['nombre','email','img','role','estado'] );
+    let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
     Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
         if (err) {
@@ -76,25 +79,25 @@ app.put('/usuario/:id', function (req, res) {
 })
 
 
-app.delete('/usuarioeliminar/:id', function (req, res) {
+app.delete('/usuarioeliminar/:id', verificaToken, function (req, res) {
     let id = req.params.id;
-    let body = _.pick( req.body,['estado'] );
+    let body = _.pick(req.body, ['estado']);
     body.estado = false;
 
     let cambiarEstado = {
-        estado:false
+        estado: false
     }
-    Usuario.findByIdAndUpdate(id,cambiarEstado ,{ new: true } ,(err, usuarioborrado) => {
-        if (err){
+    Usuario.findByIdAndUpdate(id, cambiarEstado, { new: true }, (err, usuarioborrado) => {
+        if (err) {
             return res.status(400).json({
                 ok: false,
                 err
             });
         }
-        if(!usuarioborrado){
+        if (!usuarioborrado) {
             return res.status(400).json({
                 ok: false,
-                err:{
+                err: {
                     message: 'usuario no encontrado'
                 }
             });
@@ -106,20 +109,20 @@ app.delete('/usuarioeliminar/:id', function (req, res) {
 
 
 
-app.delete('/usuario/:id', function (req, res) {
-    
+app.delete('/usuario/:id', verificaToken, function (req, res) {
+
     let id = req.params.id;
-    Usuario.findByIdAndRemove(id,(err,usuarioborrado) =>{
-        if (err){
+    Usuario.findByIdAndRemove(id, (err, usuarioborrado) => {
+        if (err) {
             return res.status(400).json({
                 ok: false,
                 err
             });
         }
-        if(!usuarioborrado){
+        if (!usuarioborrado) {
             return res.status(400).json({
                 ok: false,
-                err:{
+                err: {
                     message: 'usuario no encontrado'
                 }
             });
@@ -127,8 +130,8 @@ app.delete('/usuario/:id', function (req, res) {
 
         res.json({ ok: true, usuario: usuarioborrado });
     })
-    
-   // res.json('delete usuario')
+
+    // res.json('delete usuario')
 })
 
 
