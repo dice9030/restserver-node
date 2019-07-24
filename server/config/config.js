@@ -44,3 +44,9 @@ if(process.env.NODE_ENV === 'dev'){
 }
 process.env.URLDB = urlDB;
 
+
+//===================
+//COOGO CLIENT ID
+//===================
+
+process.env.CLIENT_ID = process.env.CLIENT_ID || '111184230950-v81j0nd4oatdmm60qcktqicthe3cr37b.apps.googleusercontent.com'
