@@ -35,7 +35,7 @@ let usuarioSchema = new Schema({
     },
     google: {
         type: Boolean,
-        default: true
+        default: false
     }
 
 });
